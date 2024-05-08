@@ -1760,7 +1760,8 @@ def backend_build(
     cmake_script.comment()
     cmake_script.mkdir(build_dir)
     cmake_script.cwd(build_dir)
-    # cmake_script.gitclone(backend_repo(be), tag, be, github_organization)
+    if be in ("python", "ensemble"):
+        cmake_script.gitclone(backend_repo(be), tag, be, github_organization)
 
     if be == "tensorrtllm":
         tensorrtllm_prebuild(cmake_script)
