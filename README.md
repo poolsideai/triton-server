@@ -60,3 +60,9 @@ Build Triton:
 ```
 ./build.py -v --no-container-build --build-dir=$(pwd)/build --enable-logging --enable-stats --enable-metrics --enable-cpu-metrics --enable-gpu-metrics --enable-gpu --backend tensorrtllm  --endpoint http
 ```
+
+## Running the Battle model
+
+```
+mpirun -n 2 build/tritonserver/install/bin/tritonserver --http-port=8080 --log-verbose=10 --backend-directory=/home/ubuntu/server/build/tensorrtllm/install/backends --model-repository=/scratch/checkpoints/battle-trt-repo/ --load-model=poolside
+```
