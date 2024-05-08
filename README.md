@@ -66,3 +66,22 @@ Build Triton:
 ```
 mpirun -n 2 build/tritonserver/install/bin/tritonserver --http-port=8080 --log-verbose=10 --backend-directory=/home/ubuntu/server/build/opt/tritonserver/backends --model-repository=/scratch/checkpoints/battle-trt-repo/ --load-model=poolside
 ```
+
+Query:
+
+```
+curl -X POST localhost:8080/v2/models/ensemble/generate -d '{
+        "text_input": "<root>How do I count to nine in French?</root>",
+        "parameters": {
+            "temperature": 0.0,
+            "top_p": 0.9,
+            "random_seed": 777,
+            "stream": false,
+            "max_tokens": 100,
+            "bad_words":[],
+            "stop_words":[]
+    }
+}'
+```
+
+Replace `/generate` with `/generate_stream` for streaming.
