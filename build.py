@@ -819,9 +819,9 @@ def fastertransformer_cmake_args():
 
 
 def tensorrtllm_cmake_args(images):
-    cmake_script.cmd("apt-get update && apt-get install -y libcudnn8-dev && ldconfig")
+    # cmake_script.cmd("apt-get update && apt-get install -y libcudnn8-dev && ldconfig")
     cmake_script.cmd(
-        "python3 ../tensorrt_llm/scripts/build_wheel.py --trt_root /usr/local/tensorrt"
+        "python3 ../tensorrt_llm/scripts/build_wheel.py --skip_building_wheel --cpp_only --extra-cmake-vars 'USE_CXX11_ABI=1' --cuda_architectures 90-real --trt_root /opt/TensorRT-9.3.0.1/ --build_type RelWithDebInfo"
     )
     cargs = [
         cmake_backend_arg(
@@ -1670,10 +1670,10 @@ def core_build(
     # [FIXME] Placing the Triton server wheel file in 'python' for now, should
     # have been upload to pip registry and be able to install directly
     cmake_script.mkdir(os.path.join(install_dir, "python"))
-    cmake_script.cp(
-        os.path.join(repo_install_dir, "python", "tritonserver*.whl"),
-        os.path.join(install_dir, "python"),
-    )
+    #cmake_script.cp(
+    #    os.path.join(repo_install_dir, "python", "tritonserver*.whl"),
+    #    os.path.join(install_dir, "python"),
+    #)
 
     cmake_script.mkdir(os.path.join(install_dir, "include", "triton"))
     cmake_script.cpdir(
@@ -1712,7 +1712,7 @@ def core_build(
 
 def tensorrtllm_prebuild(cmake_script):
     # Export the TRT_ROOT environment variable
-    cmake_script.cmd("export TRT_ROOT=/usr/local/tensorrt")
+    cmake_script.cmd("export TRT_ROOT=/opt/TensorRT-9.3.0.1")
     cmake_script.cmd("export ARCH=$(uname -m)")
     cmake_script.cmd(
         'export LD_LIBRARY_PATH="/usr/local/cuda/compat/lib.real:${LD_LIBRARY_PATH}"'
@@ -1724,10 +1724,10 @@ def tensorrtllm_postbuild(cmake_script, repo_install_dir, tensorrtllm_be_dir):
     cmake_destination_dir = os.path.join(repo_install_dir, "backends/tensorrtllm")
     cmake_script.mkdir(cmake_destination_dir)
     # Copy over the TRT-LLM wheel for later installation
-    cmake_script.cp(
-        os.path.join(tensorrtllm_be_dir, "tensorrt_llm", "build", "tensorrt_llm-*.whl"),
-        cmake_destination_dir,
-    )
+    #cmake_script.cp(
+    #    os.path.join(tensorrtllm_be_dir, "tensorrt_llm", "build", "tensorrt_llm-*.whl"),
+    #    cmake_destination_dir,
+    #)
 
     # Copy over the TRT-LLM backend libraries
     cmake_script.cp(
@@ -1760,7 +1760,7 @@ def backend_build(
     cmake_script.comment()
     cmake_script.mkdir(build_dir)
     cmake_script.cwd(build_dir)
-    cmake_script.gitclone(backend_repo(be), tag, be, github_organization)
+    # cmake_script.gitclone(backend_repo(be), tag, be, github_organization)
 
     if be == "tensorrtllm":
         tensorrtllm_prebuild(cmake_script)
